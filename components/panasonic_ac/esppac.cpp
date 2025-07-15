@@ -19,13 +19,14 @@ climate::ClimateTraits PanasonicAC::traits() {
   traits.set_visual_temperature_step(TEMPERATURE_STEP);
 
   traits.set_supported_modes({climate::CLIMATE_MODE_OFF, climate::CLIMATE_MODE_HEAT_COOL, climate::CLIMATE_MODE_COOL,
-                              climate::CLIMATE_MODE_HEAT, climate::CLIMATE_MODE_DRY});
+                              climate::CLIMATE_MODE_HEAT, climate::CLIMATE_MODE_FAN_ONLY, climate::CLIMATE_MODE_DRY});
 
   traits.set_supported_custom_fan_modes({"Automatic", "1", "2", "3", "4", "5"});
 
-  traits.set_supported_swing_modes({climate::CLIMATE_SWING_OFF, climate::CLIMATE_SWING_VERTICAL});
+  traits.set_supported_swing_modes({climate::CLIMATE_SWING_OFF, climate::CLIMATE_SWING_BOTH,
+                                    climate::CLIMATE_SWING_VERTICAL, climate::CLIMATE_SWING_HORIZONTAL});
 
-  traits.set_supported_custom_presets({"Normal"});
+  traits.set_supported_custom_presets({"Normal", "Powerful", "Quiet"});
 
   return traits;
 }
@@ -137,6 +138,8 @@ void PanasonicAC::update_mild_dry(bool mild_dry) {
 climate::ClimateAction PanasonicAC::determine_action() {
   if (this->mode == climate::CLIMATE_MODE_OFF) {
     return climate::CLIMATE_ACTION_OFF;
+  } else if (this->mode == climate::CLIMATE_MODE_FAN_ONLY) {
+    return climate::CLIMATE_ACTION_FAN;
   } else if (this->mode == climate::CLIMATE_MODE_DRY) {
     return climate::CLIMATE_ACTION_DRYING;
   } else if ((this->mode == climate::CLIMATE_MODE_COOL || this->mode == climate::CLIMATE_MODE_HEAT_COOL) &&
